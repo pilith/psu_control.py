@@ -12,6 +12,7 @@ class Main_App(tk.Frame):
         tk.Frame.__init__(self, self.root)
 
         self.powersupply = psu_data.psu()
+        self.ser_port = tk.StringVar()
         self.root.title('PSU Control')
         self.create_widgets()
 
@@ -39,10 +40,14 @@ class Main_App(tk.Frame):
         self.off_two = tk.Button(self.two_frame, text='Off', command=self.turn2_off)
         self.off_two.pack(side='bottom')
 
+        self.com_menu = tk.OptionMenu(self.root, self.ser_port, psu_data.get_comports)
+        self.com_menu.pack(side='top')
+
 
         # Labels in top row
     def turn1_on(self):
         """Turns supply one on"""
+        self.powersupply.serial_instance.port = self.ser_port.get()
         self.powersupply.send_cmd('op1 1')
     def turn2_on(self):
         """Turns supply two on"""

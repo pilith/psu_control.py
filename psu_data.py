@@ -1,30 +1,33 @@
-import psu_term
 import serial
-
-DEFAULT_BAUD_RATE = 57600
-DEFAULT_DATA_BITS = serial.EIGHTBITS
-DEFAULT_STOP_BITS = serial.STOPBITS_ONE
-DEFAULT_PARITY = serial.PARITY_NONE
-DEFAULT_XONXOFF = True
-DEFAULT_FLOW_CONTROL = None
-
-UTF8 = 'utf-8'
-
-DEBUG_PRINT = False
+import serial.tools.list_ports
 
 class psu():
 
     def __init__(self):
-        comport_ls = psu_term.get_comports()
-        comport_name = comport_ls[0].device
-        self.serial_instance = serial.Serial(port=comport_name,
-                                        baudrate=DEFAULT_BAUD_RATE,
-                                        bytesize=DEFAULT_DATA_BITS,
-                                        parity=DEFAULT_PARITY,
-                                        stopbits=DEFAULT_STOP_BITS,
-                                        xonxoff=DEFAULT_XONXOFF)
+        self.serial_instance = serial.Serial(port=None,
+                                        baudrate=57600,
+                                        bytesize=serial.EIGHTBITS,
+                                        parity=serial.PARITY_NONE,
+                                        stopbits=serial.STOPBITS_ONE,
+                                        xonxoff=True)
 
     def send_cmd(self, command):
         dec_strng = str(command + '\n')
-        #unicode_cmd =
-        psu_term.write_command(self.serial_instance, dec_strng)
+        write_command(self.serial_instance, dec_strng)
+
+
+
+def get_comports():
+    comports = serial.tools.list_ports.comports()
+    if not comports:
+        comports = ('No Com Device')
+    return comports
+
+def write_command(serial_instance, unicode_str_to_write):
+    """Write a command to the given serial instance."""
+
+    UTF8 = 'utf-8'
+    enc_str_to_write = unicode_str_to_write.encode(UTF8)
+    something = serial_instance.write(enc_str_to_write)
+
+    time.sleep(0.1)

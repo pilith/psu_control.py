@@ -15,36 +15,7 @@ import time
 import serial
 import serial.tools.list_ports
 
-DEFAULT_BAUD_RATE = 57600
-DEFAULT_DATA_BITS = serial.EIGHTBITS
-DEFAULT_STOP_BITS = serial.STOPBITS_ONE
-DEFAULT_PARITY = serial.PARITY_NONE
-DEFAULT_XONXOFF = True
-DEFAULT_FLOW_CONTROL = None
-
-UTF8 = 'utf-8'
-
-DEBUG_PRINT = False
-
-
-def get_comports():
-    """Return the list of available com ports."""
-    comports = serial.tools.list_ports.comports
-    comport_list = comports()
-    for com_port in comport_list:
-        print(com_port.device)
-
-    return comport_list
-
-
-def write_command(serial_instance, unicode_str_to_write):
-    """Write a command to the given serial instance."""
-    enc_str_to_write = unicode_str_to_write.encode(UTF8)
-    something = serial_instance.write(enc_str_to_write)
-
-    if DEBUG_PRINT:
-        print('{0} {1} {2} bytes written'.format(len(enc_str_to_write), enc_str_to_write, something))
-    time.sleep(0.1)
+U
 
 
 def write_query_and_read_response(serial_instance, unicode_str_to_write):

@@ -36,13 +36,3 @@ def write_command(serial_instance, unicode_str_to_write):
 
     time.sleep(0.1)
 
-def turn_on(self, side):
-    """Turns supply one on"""
-    self.powersupply.serial_instance.port = self.ser_port.get()
-    print('op{} 1'.format(side))
-    print(self.powersupply.serial_instance)
-    self.powersupply.send_cmd('op{} 1'.format(side))
-
-def turn_off(self, side):
-    """Turns supply two off"""
-    self.powersupply.send_cmd('op{} 0'.format(side))

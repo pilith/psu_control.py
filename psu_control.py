@@ -4,8 +4,6 @@ import tkinter as tk
 from tkinter import ttk
 
 
-
-
 class Main_App(tk.Frame):
     def __init__(self):
         self.root = tk.Tk()

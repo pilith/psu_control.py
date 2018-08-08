@@ -16,12 +16,16 @@ class psu():
         write_command(self.serial_instance, dec_strng)
 
 
-
 def get_comports():
-    comports = serial.tools.list_ports.comports()
-    if not comports:
-        comports = ('No Com Device')
-    return comports
+    comports = serial.tools.list_ports.comports
+    comports_ls = comports()
+    if not comports_ls:
+        comports_ls = ['No Com Device', 'test1', 'test2']
+    else:
+        for port in comports_ls:
+            comports_ls.append(port.device)
+    return comports_ls
+
 
 def write_command(serial_instance, unicode_str_to_write):
     """Write a command to the given serial instance."""
@@ -31,3 +35,14 @@ def write_command(serial_instance, unicode_str_to_write):
     something = serial_instance.write(enc_str_to_write)
 
     time.sleep(0.1)
+
+def turn_on(self, side):
+    """Turns supply one on"""
+    self.powersupply.serial_instance.port = self.ser_port.get()
+    print('op{} 1'.format(side))
+    print(self.powersupply.serial_instance)
+    self.powersupply.send_cmd('op{} 1'.format(side))
+
+def turn_off(self, side):
+    """Turns supply two off"""
+    self.powersupply.send_cmd('op{} 0'.format(side))

@@ -20,44 +20,60 @@ class Main_App(tk.Frame):
         """Creating the buttons and labels for turning supply on and off"""
 
         # Frames for each supply
-        self.one_frame = tk.LabelFrame(self.root, text='Left Supply', bg='green')
-        self.two_frame = tk.LabelFrame(self.root, text='Right Supply', bg='red')
-        self.one_frame.pack(side='left', padx=5, pady=5)
-        self.two_frame.pack(side='right', padx=5, pady=5)
+        self.com_frame = tk.LabelFrame(self.root, text='Com Port')
+        self.left_frame = tk.LabelFrame(self.root, text='Left Supply', bg='green')
+        self.right_frame = tk.LabelFrame(self.root, text='Right Supply', bg='red')
 
-        #self.one_label = tk.Label(self.root, text='Supply One')
-        #self.one_label.grid(row=0, column=0)
-        #self.two_label = tk.Label(self.root, text='Supply Two')
-        #self.two_label.grid(row=0, column=2)
+        self.com_frame.pack(side='top')
+        self.left_frame.pack(side='left', pady=5)
+        self.right_frame.pack(side='right', pady=5)
 
-        self.one_on_button = tk.Button(self.one_frame, text='On', command=self.turn1_on)
-        self.one_on_button.pack(side= 'top')
-        self.two_on_button = tk.Button(self.two_frame, text='On', command=self.turn2_on)
-        self.two_on_button.pack(side='top')
-
-        self.off_one = tk.Button(self.one_frame, text='Off', command=self.turn1_off)
-        self.off_one.pack(side='bottom')
-        self.off_two = tk.Button(self.two_frame, text='Off', command=self.turn2_off)
-        self.off_two.pack(side='bottom')
-
-        self.com_menu = tk.OptionMenu(self.root, self.ser_port, psu_data.get_comports)
+        # Getting com ports to chose from
+        self.com_menu = tk.OptionMenu(self.com_frame, self.ser_port, *psu_data.get_comports())
         self.com_menu.pack(side='top')
 
+        # Voltage Reading and Setting
+        self.left_voltframe = tk.LabelFrame(self.left_frame, text='Volt Amp')
+        self.right_voltframe = tk.LabelFrame(self.right_frame, text='Volt Amp')
+        self.left_voltframe.pack(side='top')
+        self.right_voltframe.pack(side='top')
 
-        # Labels in top row
-    def turn1_on(self):
-        """Turns supply one on"""
+        # Left side voltage and amperage
+        self.left_volt = tk.Entry(self.left_voltframe, width=4)
+        self.left_amp = tk.Entry(self.left_voltframe, width=4)
+        tk.Label(self.left_voltframe, text='V\nA').pack(side='left')
+        self.left_volt.pack(side='top')
+        self.left_amp.pack()
+
+        # Right side voltage and amperage
+        self.right_volt = tk.Entry(self.right_voltframe, width=4)
+        self.right_amp = tk.Entry(self.right_voltframe, width=4)
+        tk.Label(self.right_voltframe, text='V\nA').pack(side='left')
+        self.right_volt.pack(side='top')
+        self.right_amp.pack()
+
+        # Buttons to turn on/off
+        # lambda is needed to pass argument to function
+        self.one_on_button = tk.Button(self.left_frame, text='On', command=lambda: self.turn_on('1'))
+        self.one_on_button.pack()
+        self.two_on_button = tk.Button(self.right_frame, text='On', command=lambda: self.turn_on('2'))
+        self.two_on_button.pack()
+        self.off_one = tk.Button(self.left_frame, text='Off', command=lambda: self.turn_off('1'))
+        self.off_one.pack(side='bottom')
+        self.off_two = tk.Button(self.right_frame, text='Off', command=lambda: self.turn_off('2'))
+        self.off_two.pack(side='bottom')
+
+    def turn_on(self, side):
+        """Turn supplies on"""
         self.powersupply.serial_instance.port = self.ser_port.get()
-        self.powersupply.send_cmd('op1 1')
-    def turn2_on(self):
-        """Turns supply two on"""
-        self.powersupply.send_cmd('op2 1')
-    def turn1_off(self):
-        """Turns supply two off"""
-        self.powersupply.send_cmd('op1 0')
-    def turn2_off(self):
-        """Turns supply two off"""
-        self.powersupply.send_cmd('op2 0')
+        print('op{} 1'.format(side))
+        print(self.powersupply.serial_instance)
+        self.powersupply.send_cmd('op{} 1'.format(side))
+
+    def turn_off(self, side):
+        """Turn supplies  off"""
+        self.powersupply.serial_instance.port = self.ser_port.get()
+        self.powersupply.send_cmd('op{} 0'.format(side))
 
     def start(self):
         """start main loop"""

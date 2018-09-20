@@ -64,12 +64,18 @@ class Main_App(tk.Frame):
     def turn_on(self, side):
         """Turn supplies on"""
         self.powersupply.serial_instance.port = self.ser_port.get()
-        print('op{} 1'.format(side))
-        print(self.powersupply.serial_instance)
+        # Need to open com port. check if it's open, and if not..
+        if not self.powersupply.serial_instance.isOpen():
+            self.powersupply.serial_instance.open()
         self.powersupply.send_cmd('op{} 1'.format(side))
 
     def turn_off(self, side):
         """Turn supplies  off"""
+        # Repeat of getting com port just in case someone tries to turn off supply first for some stupid reason
+        self.powersupply.serial_instance.port = self.ser_port.get()
+        # Need to open com port. check if it's open, and if not..
+        if not self.powersupply.serial_instance.isOpen():
+            self.powersupply.serial_instance.open()
         self.powersupply.serial_instance.port = self.ser_port.get()
         self.powersupply.send_cmd('op{} 0'.format(side))
 

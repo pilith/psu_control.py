@@ -19,12 +19,13 @@ class psu():
 def get_comports():
     comports = serial.tools.list_ports.comports
     comports_ls = comports()
+    comp_ls = []
     if not comports_ls:
-        comports_ls = ['No Com Device', 'test1', 'test2']
+        comp_ls = ['No Com Device', 'test1', 'test2']
     else:
         for port in comports_ls:
-            comports_ls.append(port.device)
-    return comports_ls
+            comp_ls.append(port.device)
+    return comp_ls
 
 
 def write_command(serial_instance, unicode_str_to_write):

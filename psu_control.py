@@ -39,15 +39,19 @@ class Main_App(tk.Frame):
         # Left side voltage and amperage
         self.left_volt = tk.Entry(self.left_voltframe, width=4)
         self.left_amp = tk.Entry(self.left_voltframe, width=4)
+        self.left_set = tk.Button(self.left_voltframe, text='SET', command=lambda: self.set_values('1'))
         tk.Label(self.left_voltframe, text='V\nA').pack(side='left')
         self.left_volt.pack(side='top')
+        self.left_set.pack(side='right')
         self.left_amp.pack()
 
         # Right side voltage and amperage
         self.right_volt = tk.Entry(self.right_voltframe, width=4)
         self.right_amp = tk.Entry(self.right_voltframe, width=4)
+        self.right_set = tk.Button(self.right_voltframe, text='SET', command=lambda: self.set_values('2'))
         tk.Label(self.right_voltframe, text='V\nA').pack(side='left')
         self.right_volt.pack(side='top')
+        self.right_set.pack(side='right')
         self.right_amp.pack()
 
         # Buttons to turn on/off
@@ -60,24 +64,35 @@ class Main_App(tk.Frame):
         self.off_one.pack(side='bottom')
         self.off_two = tk.Button(self.right_frame, text='Off', command=lambda: self.turn_off('2'))
         self.off_two.pack(side='bottom')
+        
+    def open_ser(self):
+        """Open serial port if it's not open already"""
+        self.powersupply.serial_instance.port = self.ser_port.get()
+
+        if not self.powersupply.serial_instance.isOpen():
+            self.powersupply.serial_instance.open()
 
     def turn_on(self, side):
         """Turn supplies on"""
-        self.powersupply.serial_instance.port = self.ser_port.get()
-        # Need to open com port. check if it's open, and if not..
-        if not self.powersupply.serial_instance.isOpen():
-            self.powersupply.serial_instance.open()
+        self.open_ser()
         self.powersupply.send_cmd('op{} 1'.format(side))
 
     def turn_off(self, side):
         """Turn supplies  off"""
-        # Repeat of getting com port just in case someone tries to turn off supply first for some stupid reason
-        self.powersupply.serial_instance.port = self.ser_port.get()
-        # Need to open com port. check if it's open, and if not..
-        if not self.powersupply.serial_instance.isOpen():
-            self.powersupply.serial_instance.open()
-        self.powersupply.serial_instance.port = self.ser_port.get()
+        self.open_ser()
         self.powersupply.send_cmd('op{} 0'.format(side))
+        
+    def set_values(self, side):
+        """Set voltage and current values of supply"""
+        self.open_ser()
+        if side == '1':
+            v = self.left_volt.get()
+            a = self.left_amp.get()
+        else:
+            v = self.right_volt.get()
+            a = self.right_amp.get()
+        self.powersupply.send_cmd('V{} {}'.format(side, v))
+        self.powersupply.send_cmd('I{} {}'.format(side, a))
 
     def start(self):
         """start main loop"""

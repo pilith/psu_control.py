@@ -15,6 +15,28 @@ class psu():
         dec_strng = str(command + '\n')
         write_command(self.serial_instance, dec_strng)
 
+    def open_ser(self, port):
+        """Open serial port if it's not open already"""
+        self.serial_instance.port = port
+
+        if not self.serial_instance.isOpen():
+            self.serial_instance.open()
+
+    def turn_on(self, side):
+        """Turn supplies on"""
+        self.open_ser()
+        self.send_cmd('op{} 1'.format(side))
+
+    def turn_off(self, side):
+        """Turn supplies  off"""
+        self.open_ser()
+        self.send_cmd('op{} 0'.format(side))
+
+    def set_values(self, side, volt, amp):
+        """Set voltage and current values of supply"""
+        self.open_ser()
+        self.send_cmd('V{} {}'.format(side, volt))
+        self.send_cmd('I{} {}'.format(side, amp))
 
 def get_comports():
     comports = serial.tools.list_ports.comports

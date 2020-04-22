@@ -21,10 +21,12 @@ class Main_App(tk.Frame):
         self.com_frame = tk.LabelFrame(self.root, text='Com Port')
         self.left_frame = tk.LabelFrame(self.root, text='Left Supply', bg='green')
         self.right_frame = tk.LabelFrame(self.root, text='Right Supply', bg='red')
+        self.both_frame = tk.LabelFrame(self.root, text='Synchronus On/Off')
 
         self.com_frame.pack(side='top')
         self.left_frame.pack(side='left', pady=5)
         self.right_frame.pack(side='right', pady=5)
+        self.both_frame.pack(side='bottom')
 
         # Getting com ports to chose from
         self.com_menu = tk.OptionMenu(self.com_frame, self.ser_port, *psu_data.get_comports())
@@ -64,6 +66,12 @@ class Main_App(tk.Frame):
         self.off_one.pack(side='bottom')
         self.off_two = tk.Button(self.right_frame, text='Off', command=lambda: self.turn_off('2'))
         self.off_two.pack(side='bottom')
+
+        #Synch buttons
+        self.dual_button_on = tk.Button(self.both_frame, text='Both On', command=lambda: self.dual_power('1'))
+        self.dual_button_off = tk.Button(self.both_frame, text='Both Off', command=lambda: self.dual_power('0'))
+        self.dual_button_off.pack(side='right')
+        self.dual_button_on.pack(side='left')
         
     def open_ser(self):
         """Open serial port if it's not open already"""
@@ -81,6 +89,12 @@ class Main_App(tk.Frame):
         """Turn supplies  off"""
         self.open_ser()
         self.powersupply.send_cmd('op{} 0'.format(side))
+
+    def dual_power(self, state):
+        """Turn on or off both supplies"""
+        self.open_ser()
+        self.powersupply.send_cmd(f'op1 {state}')
+        self.powersupply.send_cmd(f'op2 {state}')
         
     def set_values(self, side):
         """Set voltage and current values of supply"""

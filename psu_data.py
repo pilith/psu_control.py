@@ -1,5 +1,6 @@
 import serial
 import serial.tools.list_ports
+import time
 
 class psu():
 
@@ -10,14 +11,19 @@ class psu():
                                         parity=serial.PARITY_NONE,
                                         stopbits=serial.STOPBITS_ONE,
                                         xonxoff=True)
+        self.current = ""
 
     def send_cmd(self, command):
         dec_strng = str(command + '\n')
         write_command(self.serial_instance, dec_strng)
+        while self.serial_instance.inWaiting() > 0:
+            #print(self.serial_instance.readline().decode('UTF-8'))
+            self.current = self.serial_instance.readline().decode('UTF-8')
 
-    def open_ser(self, port):
+
+    def open_ser(self):
         """Open serial port if it's not open already"""
-        self.serial_instance.port = port
+        #self.serial_instance.port = port
 
         if not self.serial_instance.isOpen():
             self.serial_instance.open()

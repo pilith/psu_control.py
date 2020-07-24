@@ -8,7 +8,7 @@ FPGA_FILE = 'FA0010_CABC_EA-0256-RevJ.bin'
 class Psu():
 
     def __init__(self):
-        self.serial_instance = serial.Serial(port='com10',
+        self.serial_instance = serial.Serial(port='com5',
                                         baudrate=57600,
                                         bytesize=serial.EIGHTBITS,
                                         parity=serial.PARITY_NONE,
@@ -41,9 +41,9 @@ if not powersupply.serial_instance.isOpen():
 x = 0
 broken = False
 while not broken:
-    psu_power(1, 1, 19)
-    sleep(5)
-    psu_power(1, 0, 19)
+    psu_power(2, 1, 19)
+    sleep(10)
+    psu_power(2, 0, 19)
     x = x + 1
     sleep(3)
     if x < 20:

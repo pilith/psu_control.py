@@ -28,6 +28,10 @@ class psu():
         if not self.serial_instance.isOpen():
             self.serial_instance.open()
 
+    def close_ser(self):
+        """closes serial port to be proper"""
+        self.serial_instance.close()
+
     def turn_on(self, side):
         """Turn supplies on"""
         self.open_ser()

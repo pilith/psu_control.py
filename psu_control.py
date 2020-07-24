@@ -1,6 +1,8 @@
 #! python3
 import psu_data
 import tkinter as tk
+from time import sleep
+
 from tkinter import ttk
 
 
@@ -22,11 +24,13 @@ class Main_App(tk.Frame):
         self.left_frame = tk.LabelFrame(self.root, text='Left Supply', bg='green')
         self.right_frame = tk.LabelFrame(self.root, text='Right Supply', bg='red')
         self.both_frame = tk.LabelFrame(self.root, text='Synchronus On/Off')
+        self.cycle_frame = tk.LabelFrame(self.root, text = 'Power Cycle')
 
         self.com_frame.pack(side='top')
         self.left_frame.pack(side='left', pady=5)
         self.right_frame.pack(side='right', pady=5)
-        self.both_frame.pack(side='bottom')
+        self.both_frame.pack(side='top')
+        self.cycle_frame.pack(side='bottom')
 
         # Getting com ports to chose from
         self.com_menu = tk.OptionMenu(self.com_frame, self.ser_port, *psu_data.get_comports())
@@ -72,6 +76,16 @@ class Main_App(tk.Frame):
         self.dual_button_off = tk.Button(self.both_frame, text='Both Off', command=lambda: self.dual_power('0'))
         self.dual_button_off.pack(side='right')
         self.dual_button_on.pack(side='left')
+
+        #Power cycling buttons
+        self.cycle_time = tk.Entry(self.cycle_frame, width=4)
+        tk.Label(self.cycle_frame, text = 'Time Off').pack(side='left')
+        self.cycle_time.pack(side='right')
+        self.cycle_button_l = tk.Button(self.cycle_frame, text='Left')
+        self.cycle_button_r = tk.Button(self.cycle_frame, text='Right')
+
+        self.cycle_button_l.anchor()
+        self.cycle_button_r.anchor()
         
     def open_ser(self):
         """Open serial port if it's not open already"""
@@ -95,6 +109,8 @@ class Main_App(tk.Frame):
         self.open_ser()
         self.powersupply.send_cmd(f'op1 {state}')
         self.powersupply.send_cmd(f'op2 {state}')
+
+    #def power_cycle(self, side, time_off):
         
     def set_values(self, side):
         """Set voltage and current values of supply"""
